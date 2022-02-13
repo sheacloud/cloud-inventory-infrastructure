@@ -1,22 +1,3 @@
-variable "vpc_id" {
-  type = string
-}
-
-variable "subnet_ids" {
-  type = list(string)
-}
-
-
-
-variable "s3_bucket_prefix" {
-  type = string
-}
-
-variable "ecs_assign_public_ip" {
-  type    = bool
-  default = true
-}
-
 variable "assume_role_name" {
   type = string
 }
@@ -35,8 +16,21 @@ variable "scrape_frequency" {
   type = string
 }
 
-variable "public_domain_name" {
+variable "cloud_inventory_s3_bucket" {
   type = string
+}
+
+variable "ecs_assign_public_ip" {
+  type    = bool
+  default = true
+}
+
+variable "vpc_id" {
+  type = string
+}
+
+variable "subnet_ids" {
+  type = list(string)
 }
 
 variable "cloud_inventory_aws_account_ids" {
