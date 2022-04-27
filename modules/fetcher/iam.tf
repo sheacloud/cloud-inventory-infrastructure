@@ -30,11 +30,31 @@ resource "aws_iam_policy" "cloud_inventory_fetcher_task_policy" {
           "s3:GetObject",
           "s3:*",
         ]
-        Effect   = "Allow"
+        Effect = "Allow"
         Resource = [
           "arn:aws:s3:::${var.cloud_inventory_s3_bucket}/*",
           "arn:aws:s3:::${var.cloud_inventory_s3_bucket}"
         ]
+      },
+      {
+        Action = [
+          "dynamodb:BatchGetItem",
+          "dynamodb:BatchWriteItem",
+          "dynamodb:PutItem",
+          "dynamodb:GetItem",
+          "dynamodb:Scan",
+          "dynamodb:Query"
+        ]
+        Effect   = "Allow"
+        Resource = "arn:aws:dynamodb:*:${data.aws_caller_identity.current.account_id}:table/cloud-inventory-*"
+      },
+      {
+        Action = [
+          "dynamodb:Scan",
+          "dynamodb:Query"
+        ]
+        Effect   = "Allow"
+        Resource = "arn:aws:dynamodb:*:${data.aws_caller_identity.current.account_id}:table/cloud-inventory-*/index/*"
       }
     ]
   })

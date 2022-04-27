@@ -28,6 +28,14 @@ resource "aws_ecs_task_definition" "cloud_inventory_fetcher" {
         {
           name  = "CLOUD_INVENTORY_AWS_USE_LOCAL_CREDENTIALS"
           value = "false"
+        },
+        {
+          name  = "CLOUD_INVENTORY_MONGO_URI"
+          value = var.mongo_uri
+        },
+        {
+          name  = "CLOUD_INVENTORY_ENABLE_DYNAMODB"
+          value = var.enable_dynamodb ? "true" : ""
         }
       ]
       logConfiguration = {

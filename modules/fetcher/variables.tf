@@ -36,3 +36,13 @@ variable "subnet_ids" {
 variable "cloud_inventory_aws_account_ids" {
   type = string
 }
+
+variable "mongo_uri" {
+  type    = string
+  default = ""
+}
+
+variable "enable_dynamodb" {
+  type    = bool
+  default = false
+}

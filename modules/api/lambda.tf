@@ -19,12 +19,17 @@ resource "aws_lambda_function" "cloud_inventory_api" {
 
   runtime = "go1.x"
 
+  tracing_config {
+    mode = var.enable_tracing ? "Active" : "PassThrough"
+  }
+
   environment {
     variables = {
-      "LOG_LEVEL"                 = "INFO"
-      "CLOUD_INVENTORY_S3_BUCKET" = var.cloud_inventory_s3_bucket
-      "CLOUD_INVENTORY_API_URL"   = "${aws_apigatewayv2_domain_name.cloud_inventory.domain_name}"
-      "GIN_MODE"                  = "release"
+      "LOG_LEVEL"                     = "INFO"
+      "CLOUD_INVENTORY_S3_BUCKET"     = var.cloud_inventory_s3_bucket
+      "CLOUD_INVENTORY_API_URL"       = "${aws_apigatewayv2_domain_name.cloud_inventory.domain_name}"
+      "GIN_MODE"                      = "release"
+      "CLOUD_INVENTORY_DATABASE_TYPE" = "dynamodb"
     }
   }
 
@@ -55,10 +60,15 @@ resource "aws_lambda_function" "cloud_inventory_authorizer" {
 
   runtime = "go1.x"
 
+  tracing_config {
+    mode = var.enable_tracing ? "Active" : "PassThrough"
+  }
+
   environment {
     variables = {
-      "LOG_LEVEL"                      = "INFO"
-      "CLOUD_INVENTORY_API_KEYS_TABLE" = aws_dynamodb_table.cloud_inventory_api_keys.name
+      "LOG_LEVEL"                            = "INFO"
+      "CLOUD_INVENTORY_API_KEYS_TABLE"       = aws_dynamodb_table.cloud_inventory_api_keys.name
+      "CLOUD_INVENTORY_COGNITO_USER_POOL_ID" = var.cognito_user_pool_id
     }
   }
 

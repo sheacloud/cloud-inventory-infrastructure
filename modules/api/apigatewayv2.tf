@@ -2,6 +2,12 @@
 resource "aws_apigatewayv2_api" "cloud_inventory" {
   name          = "cloud-inventory"
   protocol_type = "HTTP"
+  cors_configuration {
+    allow_origins = ["http://localhost:8080", "https://cloud-inventory.sheacloud.com"]
+    allow_headers = ["*"]
+    allow_methods = ["*"]
+    allow_credentials = true
+  }
 }
 
 resource "aws_apigatewayv2_stage" "default" {
@@ -47,6 +53,13 @@ resource "aws_apigatewayv2_route" "cloud_inventory_docs" {
   target = "integrations/${aws_apigatewayv2_integration.cloud_inventory_ingestion.id}"
 }
 
+resource "aws_apigatewayv2_route" "cloud_inventory_cors" {
+  api_id    = aws_apigatewayv2_api.cloud_inventory.id
+  route_key = "OPTIONS /{proxy+}"
+
+  target = "integrations/${aws_apigatewayv2_integration.cloud_inventory_ingestion.id}"
+}
+
 resource "aws_apigatewayv2_domain_name" "cloud_inventory" {
   domain_name = "${local.hostname}.${var.public_domain_name}"
 
@@ -71,5 +84,5 @@ resource "aws_apigatewayv2_authorizer" "custom_auth" {
   authorizer_result_ttl_in_seconds  = 0
   authorizer_uri                    = aws_lambda_function.cloud_inventory_authorizer.invoke_arn
   enable_simple_responses           = true
-  identity_sources                  = ["$request.header.X-API-Key"]
+  identity_sources                  = ["$request.header.Authorization"]
 }

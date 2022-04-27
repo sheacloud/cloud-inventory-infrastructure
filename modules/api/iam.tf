@@ -39,6 +39,31 @@ resource "aws_iam_policy" "cloud_inventory_api_lambda_policy" {
           "arn:aws:s3:::${var.cloud_inventory_s3_bucket}/*",
           "arn:aws:s3:::${var.cloud_inventory_s3_bucket}"
         ]
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "xray:PutTraceSegments",
+          "xray:PutTelemetryRecords"
+        ],
+        "Resource" : "*"
+      },
+      {
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:Scan",
+          "dynamodb:Query"
+        ]
+        Effect   = "Allow"
+        Resource = "arn:aws:dynamodb:*:${data.aws_caller_identity.current.account_id}:table/cloud-inventory-*"
+      },
+      {
+        Action = [
+          "dynamodb:Scan",
+          "dynamodb:Query"
+        ]
+        Effect   = "Allow"
+        Resource = "arn:aws:dynamodb:*:${data.aws_caller_identity.current.account_id}:table/cloud-inventory-*/index/*"
       }
     ]
   })
@@ -93,6 +118,14 @@ resource "aws_iam_policy" "cloud_inventory_authorizer_lambda_policy" {
           "dynamodb:UpdateItem",
         ],
         "Resource" : aws_dynamodb_table.cloud_inventory_api_keys.arn
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "xray:PutTraceSegments",
+          "xray:PutTelemetryRecords"
+        ],
+        "Resource" : "*"
       }
     ]
   })
